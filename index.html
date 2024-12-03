@@ -151,6 +151,22 @@
                 console.error('Failed to copy text: ', err);
             });
         }
+        // Get elements with '#open-camera' ID, then click it after button with '#open-camera' ID is clicked
+        document.querySelector("#open-camera").addEventListener("click", function() {
+            document.querySelector("#capture-photo").click();
+        });
+
+        // Set a photo taken or chosen by '#capture-photo' to '#photo' 
+        document.querySelector("#capture-photo").addEventListener("change", function() {
+            var file = this.files[0];
+            if (file) {
+                var reader = new FileReader(); 
+                reader.onload = function(event) {
+                    document.querySelector("#photo").src = event.target.result;
+                }; 
+                reader.readAsDataURL(file);
+            }
+});
     </script>
 </body>
 </html>
