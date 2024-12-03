@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,29 +12,40 @@
             margin: 0;
             padding: 0;
         }
+
         .container {
-    width: 100%;
-    max-width: 70%;  /* adjust this value based on your needs */
-    margin: 20px auto;
-    background-color: white;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    box-sizing: border-box;
-}
-        .header, .languages, .translation, .info, .options {
+            width: 100%;
+            max-width: 70%;
+            /* adjust this value based on your needs */
+            margin: 20px auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .header,
+        .languages,
+        .translation,
+        .info,
+        .options {
             margin-bottom: 15px;
         }
+
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 38px;  /* Change font-size here */
+            font-size: 30px;
+            /* Change font-size here */
         }
+
         .languages {
             display: flex;
             justify-content: space-around;
         }
+
         .lang-btn {
             flex: 1;
             text-align: center;
@@ -42,8 +54,10 @@
             /* background-color: #e0e0e0; */
             /* border-radius: 5px; */
             cursor: pointer;
-            font-size: 18px;  /* Change font-size here */
+            font-size: 18px;
+            /* Change font-size here */
         }
+
         /* .lang-btn.active {
             background-color: #fff;
             border: 1px solid #ccc;
@@ -54,6 +68,7 @@
             align-items: center;
             flex: 0.2;
         }
+
         .translation {
             background-color: #fff;
             border-radius: 10px;
@@ -62,19 +77,24 @@
             margin-bottom: 10px;
             position: relative;
         }
+
         .info {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
+
         .info span {
             font-weight: bold;
-            font-size: 28px;  /* Change font-size here */
+            font-size: 28px;
+            /* Change font-size here */
         }
+
         .text {
             margin-top: 10px;
             margin-bottom: 10px;
         }
+
         .copy-btn {
             position: absolute;
             right: 10px;
@@ -83,26 +103,39 @@
             width: 24px;
             height: 24px;
         }
+
         .options {
             text-align: center;
         }
+
         .logo {
-            width: 10%;  /* Increased size */
-            height: 10%; /* Increased size */
+            width: 10%;
+            /* Increased size */
+            height: 10%;
+            /* Increased size */
         }
+
         .logo2 {
-            width: 30px;  /* Increased size */
-            height: 60px; /* Increased size */
+            width: 30px;
+            /* Increased size */
+            height: 60px;
+            /* Increased size */
         }
+
         .camera-icon {
-            width: 30px;  /* Adjust the size as needed */
-            height: 30px;  /* Adjust the size as needed */
-            float: right;  /* Change from left to right */
-            margin-right: 10px;  /* Adjust the margin as needed */
+            width: 30px;
+            /* Adjust the size as needed */
+            height: 30px;
+            /* Adjust the size as needed */
+            float: right;
+            /* Change from left to right */
+            margin-right: 10px;
+            /* Adjust the margin as needed */
             align-items: center;
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
@@ -134,12 +167,16 @@
                 <option value="Traditional Chinese">Traditional Chinese</option>
             </select>
             <div class="camera">
-                <img src="./icon/camera.png" alt="camera" class="camera-icon"> <!-- New camera image here -->
+                <img src="./icon/camera.png" alt="camera" class="camera-icon">
+            </div>
+            <div class="share">
+                <img src="./icon/share.png" alt="camera" class="camera-icon">
             </div>
         </div>
     </div>
 
     <script>
+        document.querySelector('.share').addEventListener('click', clickShareBtn);
         function copyText(elementId) {
             var text = document.getElementById(elementId).innerText;
             navigator.clipboard.writeText(text).then(() => {
@@ -148,6 +185,42 @@
                 console.error('Failed to copy text: ', err);
             });
         }
+
+        function clickShareBtn() {
+            if (isMobileDevice()) {
+                // Add mobile-specific functionality
+                shareContent()
+            } else {
+                // Add desktop-specific functionality
+                sendEmail()
+            }
+        }
+
+        function isMobileDevice() {
+            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+            const mobileRegExp = /(iphone|ipod|android|windows phone|symbian|blackberry|bb|mini|nokia|sony|ezweb|wap|mobile|mobi|operamobi|smartphone|tablet|iemobile)/i;
+
+            return mobileRegExp.test(userAgent);
+        }
+
+        function shareContent() {
+            navigator.share({
+                title: 'Medical Report Translator',
+                text: 'Check out this medical report translation.',
+                url: window.location.href
+            })
+                .then(() => console.log('Shared successfully'))
+                .catch((error) => console.log('Error sharing:', error));
+        }
+
+        function sendEmail() {
+            var subject = 'Medical Report Translator Result';
+            var body = 'Here is the translation result: \n\n' + document.getElementById('spanish-text').innerText;
+
+            var mailtoLink = 'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+            window.location.href = mailtoLink;
+        }
     </script>
 </body>
+
 </html>
