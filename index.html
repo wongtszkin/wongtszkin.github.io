@@ -28,6 +28,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            font-size: 38px;  /* Change font-size here */
         }
         .languages {
             display: flex;
@@ -41,6 +42,7 @@
             /* background-color: #e0e0e0; */
             /* border-radius: 5px; */
             cursor: pointer;
+            font-size: 18px;  /* Change font-size here */
         }
         /* .lang-btn.active {
             background-color: #fff;
@@ -67,6 +69,7 @@
         }
         .info span {
             font-weight: bold;
+            font-size: 28px;  /* Change font-size here */
         }
         .text {
             margin-top: 10px;
@@ -84,8 +87,8 @@
             text-align: center;
         }
         .logo {
-            width: 40px;  /* Increased size */
-            height: 60px; /* Increased size */
+            width: 10%;  /* Increased size */
+            height: 10%; /* Increased size */
         }
         .logo2 {
             width: 30px;  /* Increased size */
@@ -130,13 +133,37 @@
                 <option value="Thai">Thai</option>
                 <option value="Traditional Chinese">Traditional Chinese</option>
             </select>
-            <div class="camera">
-                <img src="./icon/camera.png" alt="camera" class="camera-icon"> <!-- New camera image here -->
+            <div>
+                <button id="camera">
+                    <img src="./icon/camera.png" alt="camera"><!-- New camera image here -->
+                </button>
             </div>
         </div>
     </div>
 
     <script>
+        const cameraButton = document.getElementById('camera');
+        const captureButton = document.getElementById('capture');
+        const uploadButton = document.getElementById('upload');
+            // Capture the photo when the button is clicked
+        captureButton.addEventListener('click', () => {
+            const context = canvas.getContext('2d');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // Convert the canvas image to a data URL
+            const dataUrl = canvas.toDataURL('image/png');
+            photo.src = dataUrl;
+
+            // Show the captured photo
+            photo.style.display = 'block';
+
+            // Convert data URL to Blob for upload
+            capturedBlob = dataURLToBlob(dataUrl);
+        });
+
+
         function copyText(elementId) {
             var text = document.getElementById(elementId).innerText;
             navigator.clipboard.writeText(text).then(() => {
