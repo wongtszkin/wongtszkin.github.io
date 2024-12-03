@@ -133,37 +133,13 @@
                 <option value="Thai">Thai</option>
                 <option value="Traditional Chinese">Traditional Chinese</option>
             </select>
-            <div>
-                <button id="camera">
-                    <img src="./icon/camera.png" alt="camera"><!-- New camera image here -->
-                </button>
+            <div class="camera">
+                <img src="./icon/camera.png" alt="camera" class="camera-icon"> <!-- New camera image here -->
             </div>
         </div>
     </div>
 
     <script>
-        const cameraButton = document.getElementById('camera');
-        const captureButton = document.getElementById('capture');
-        const uploadButton = document.getElementById('upload');
-            // Capture the photo when the button is clicked
-        captureButton.addEventListener('click', () => {
-            const context = canvas.getContext('2d');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-            // Convert the canvas image to a data URL
-            const dataUrl = canvas.toDataURL('image/png');
-            photo.src = dataUrl;
-
-            // Show the captured photo
-            photo.style.display = 'block';
-
-            // Convert data URL to Blob for upload
-            capturedBlob = dataURLToBlob(dataUrl);
-        });
-
-
         function copyText(elementId) {
             var text = document.getElementById(elementId).innerText;
             navigator.clipboard.writeText(text).then(() => {
