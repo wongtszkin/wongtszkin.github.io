@@ -12,15 +12,15 @@
             padding: 0;
         }
         .container {
-            width: 100%;
-            max-width: 400px;
-            margin: 20px auto;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            box-sizing: border-box;
-        }
+    width: 100%;
+    max-width: 70%;  /* adjust this value based on your needs */
+    margin: 20px auto;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    box-sizing: border-box;
+}
         .header, .languages, .translation, .info, .options {
             margin-bottom: 15px;
         }
@@ -37,15 +37,15 @@
             flex: 1;
             text-align: center;
             padding: 5px;
-            margin: 5px;
-            background-color: #e0e0e0;
-            border-radius: 5px;
+            margin-right: 15px;
+            /* background-color: #e0e0e0; */
+            /* border-radius: 5px; */
             cursor: pointer;
         }
-        .lang-btn.active {
+        /* .lang-btn.active {
             background-color: #fff;
             border: 1px solid #ccc;
-        }
+        } */
         .switch {
             display: flex;
             justify-content: center;
@@ -106,23 +106,6 @@
             <img src="./icon/HA-logo.png" alt="HA-logo" class="logo">
             <span>Medical Report Translator</span>
         </div>
-        <input type="file" accept="image/*" capture="camera" id="capture-photo" style="display: none;" />
-        <button id="open-camera">Open Camera</button>
-        <img id="photo" alt="The screen capture will appear in this box.">
-        <div class="languages">
-            <div class="info">
-            <span>Select Language:</span>
-            </div>
-            <select class="lang-btn">
-                <option value="English">English</option>
-                <option value="French">French</option>
-                <option value="German">German</option>
-                <option value="Japanese">Japanese</option>
-                <option value="Spanish">Spanish</option>
-                <option value="Thai">Thai</option>
-                <option value="Traditional Chinese">Traditional Chinese</option>
-            </select>
-        </div>
         <div class="translation">
             <div class="info">
                 <span>OCR Result</span>
@@ -137,10 +120,22 @@
             <div class="text" id="spanish-text">El tiempo está bien.</div>
             <img src="./icon/copy.png" class="copy-btn" onclick="copyText('spanish-text')" alt="Copy Spanish text">
         </div>
-        <div id="email-container" class="options">
-            <button id="send-email">Send result to email</button>
+        <div class="languages">
+            <select class="lang-btn">
+                <option value="English">English</option>
+                <option value="French">French</option>
+                <option value="German">German</option>
+                <option value="Japanese">Japanese</option>
+                <option value="Spanish">Spanish</option>
+                <option value="Thai">Thai</option>
+                <option value="Traditional Chinese">Traditional Chinese</option>
+            </select>
+            <div class="camera">
+                <img src="./icon/camera.png" alt="camera" class="camera-icon"> <!-- New camera image here -->
+            </div>
         </div>
     </div>
+
     <script>
         function copyText(elementId) {
             var text = document.getElementById(elementId).innerText;
@@ -150,22 +145,6 @@
                 console.error('Failed to copy text: ', err);
             });
         }
-        // Get elements with '#open-camera' ID, then click it after button with '#open-camera' ID is clicked
-        document.querySelector("#open-camera").addEventListener("click", function() {
-            document.querySelector("#capture-photo").click();
-        });
-
-        // Set a photo taken or chosen by '#capture-photo' to '#photo' 
-        document.querySelector("#capture-photo").addEventListener("change", function() {
-            var file = this.files[0];
-            if (file) {
-                var reader = new FileReader(); 
-                reader.onload = function(event) {
-                    document.querySelector("#photo").src = event.target.result;
-                }; 
-                reader.readAsDataURL(file);
-            }
-});
     </script>
 </body>
 </html>
