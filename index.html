@@ -1,4 +1,156 @@
-<form action="/upload" method="post" enctype="multipart/form-data">
-    <input type="file" name="photo" accept="image/*" capture="camera">
-    <input type="submit" value="Upload">
-  </form>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Report Translator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f6;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 100%;
+            max-width: 400px;
+            margin: 20px auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .header, .languages, .translation, .info, .options {
+            margin-bottom: 15px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .languages {
+            display: flex;
+            justify-content: space-around;
+        }
+        .lang-btn {
+            flex: 1;
+            text-align: center;
+            padding: 5px;
+            margin: 5px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .lang-btn.active {
+            background-color: #fff;
+            border: 1px solid #ccc;
+        }
+        .switch {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex: 0.2;
+        }
+        .translation {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 10px;
+            position: relative;
+        }
+        .info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .info span {
+            font-weight: bold;
+        }
+        .text {
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        .copy-btn {
+            position: absolute;
+            right: 10px;
+            bottom: 10px;
+            cursor: pointer;
+            width: 24px;
+            height: 24px;
+        }
+        .options {
+            text-align: center;
+        }
+        .logo {
+            width: 40px;  /* Increased size */
+            height: 60px; /* Increased size */
+        }
+        .logo2 {
+            width: 30px;  /* Increased size */
+            height: 60px; /* Increased size */
+        }
+        .camera-icon {
+            width: 30px;  /* Adjust the size as needed */
+            height: 30px;  /* Adjust the size as needed */
+            float: right;  /* Change from left to right */
+            margin-right: 10px;  /* Adjust the margin as needed */
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="./icon/HA-logo.png" alt="HA-logo" class="logo">
+            <span>Medical Report Translator</span>
+        </div>
+        <input type="file" accept="image/*" capture="camera" id="capture-photo" style="display: none;" />
+        <button id="open-camera">
+            <img src="./icon/camera.png" alt="camera" class="camera-icon"> 
+        </button>
+        <div class="languages">
+            <div class="info">
+            <span>Select Language:</span>
+            </div>
+            <select class="lang-btn">
+                <option value="English">English</option>
+                <option value="French">French</option>
+                <option value="German">German</option>
+                <option value="Japanese">Japanese</option>
+                <option value="Spanish">Spanish</option>
+                <option value="Thai">Thai</option>
+                <option value="Traditional Chinese">Traditional Chinese</option>
+            </select>
+        </div>
+        <div class="translation">
+            <div class="info">
+                <span>OCR Result</span>
+            </div>
+            <div class="text" id="english-text">The weather is fine.</div>
+            <img src="./icon/copy.png" class="copy-btn" onclick="copyText('english-text')" alt="Copy English text">
+        </div>
+        <div class="translation">
+            <div class="info">
+                <span>Translation Result</span>
+            </div>
+            <div class="text" id="spanish-text">El tiempo está bien.</div>
+            <img src="./icon/copy.png" class="copy-btn" onclick="copyText('spanish-text')" alt="Copy Spanish text">
+        </div>
+        <div id="email-container" class="options">
+            <button id="send-email">Send result to email</button>
+        </div>
+    </div>
+    <script>
+        function copyText(elementId) {
+            var text = document.getElementById(elementId).innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Copied: ' + text);
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+            });
+        }
+    </script>
+</body>
+</html>
