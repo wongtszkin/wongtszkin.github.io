@@ -144,8 +144,8 @@
         </div>
 
         <input type="file" accept="image/*" capture="camera" id="capture-photo" style="display: none;" />
+        
         <button id="open-camera">Open Camera</button>
-        <img id="photo" alt="The screen capture will appear in this box.">
         
         <div class="translation">
             <div class="info">
@@ -181,6 +181,9 @@
     </div>
 
     <script>
+        document.getElementById('open-camera').addEventListener('click', function() {
+        document.getElementById('capture-photo').click();
+    });
         document.querySelector('.share').addEventListener('click', clickShareBtn);
         function copyText(elementId) {
             var text = document.getElementById(elementId).innerText;
