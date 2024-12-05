@@ -439,6 +439,12 @@
                         }
                     }
                 })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    if (retry) {
+                        setTimeout(() => fetchResult(taskIds, retries < 30, retries + 1), 1000); // Retry after 1 seconds, increment retries counter
+                    }
+                });
         }
 
         function buildApiRequest(content, modelName, selectedMode, selectedLanguage, temperature) {
