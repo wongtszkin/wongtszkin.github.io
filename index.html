@@ -13,6 +13,10 @@
             padding: 0;
         }
 
+        .capture {
+            margin-top: 20px;
+        }
+
         .container {
             width: 100%;
             max-width: 70%;
@@ -25,7 +29,23 @@
             box-sizing: border-box;
         }
 
-        .header,
+        .header {
+            display: flex;
+            width: 100%;
+        }
+
+        .header .expand {
+            min-width: 10%;
+            width: 100%;
+        }
+
+        .header .title {
+            display: inline-flex;
+            justify-content: flex-end;
+            align-items: center;
+            font-size: 20px;
+        }
+
         .languages,
         .translation,
         .info,
@@ -33,17 +53,16 @@
             margin-bottom: 15px;
         }
 
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 30px;
-            /* Change font-size here */
-        }
-
         .languages {
             display: flex;
-            justify-content: space-around;
+            justify-content: flex-end;
+            align-items: center;
+            flex-direction: row;
+            flex-wrap: nowrap;
+        }
+
+        .lang-btn {
+            min-width: 60%;
         }
 
         .lang-btn {
@@ -58,10 +77,6 @@
             /* Change font-size here */
         }
 
-        /* .lang-btn.active {
-            background-color: #fff;
-            border: 1px solid #ccc;
-        } */
         .switch {
             display: flex;
             justify-content: center;
@@ -108,21 +123,15 @@
             text-align: center;
         }
 
-        .logo {
-            width: 10%;
-            /* Increased size */
-            height: 10%;
-            /* Increased size */
+        video,
+        canvas,
+        #photo {
+            min-width: 50%;
+            max-width: 100%;
         }
 
-        .logo2 {
-            width: 30px;
-            /* Increased size */
-            height: 60px;
-            /* Increased size */
-        }
-
-        .camera-icon {
+        .camera-icon,
+        .share-icon {
             width: 30px;
             /* Adjust the size as needed */
             height: 30px;
@@ -133,20 +142,103 @@
             /* Adjust the margin as needed */
             align-items: center;
         }
+
+        /* Styles for mobile devices with a maximum width of 768px */
+        @media (max-width: 768px) {
+
+            video,
+            canvas,
+            #photo {
+                min-width: 50%;
+                max-width: 100%;
+            }
+
+            .logo {
+                min-width: 30px;
+                width: 40%;
+                height: 40%;
+            }
+        }
+
+        /* Styles for larger mobile devices with a minimum width of 769px */
+        @media (min-width: 769px) {
+
+            video,
+            canvas,
+            #photo {
+                min-width: 50%;
+                max-width: 100%;
+            }
+
+            .capture {
+                display: flex;
+            }
+
+            .header .title {
+                display: inline-flex;
+                justify-content: flex-end;
+                align-items: center;
+                white-space: nowrap;
+                font-size: 30px;
+            }
+
+            .logo {
+                min-width: 20%;
+                min-height: 20%;
+                width: 20%;
+                height: 20%;
+            }
+        }
+
+        /* Styles for desktop devices with a minimum width of 1025px */
+        @media (min-width: 1025px) {
+
+            video,
+            canvas,
+            #photo {
+                min-width: 50%;
+                max-width: 100%;
+            }
+
+            .capture {
+                display: flex;
+            }
+
+            .header .title {
+                display: inline;
+                justify-content: flex-end;
+                align-items: center;
+                white-space: nowrap;
+                font-size: 40px;
+            }
+
+            .logo {
+                min-width: 10%;
+                min-height: 10%;
+                width: 10%;
+                height: 10%;
+            }
+        }
     </style>
 </head>
 
 <body>
     <div class="container">
         <div class="header">
-            <img src="./icon/HA-logo.png" alt="HA-logo" class="logo">
-            <span>Medical Report Translator</span>
+            <div class="logo">
+                <img src="./icon/HA-logo.png" class="logo-image" style="width:100%">
+            </div>
+            <div class="expand">
+            </div>
+            <div class="title">
+                Medical Report Translator
+            </div>
         </div>
-
-        <input type="file" accept="image/*" capture="camera" id="capture-photo" style="display: none;" />
-        
-        <button id="open-camera">Open Camera</button>
-        
+        <div class="capture">
+            <video id="video" autoplay></video>
+            <canvas id="canvas" style="display: none;"></canvas>
+            <img id="photo" style="display: none;">
+        </div>
         <div class="translation">
             <div class="info">
                 <span>OCR Result</span>
@@ -158,8 +250,8 @@
             <div class="info">
                 <span>Translation Result</span>
             </div>
-            <div class="text" id="spanish-text">El tiempo está bien.</div>
-            <img src="./icon/copy.png" class="copy-btn" onclick="copyText('spanish-text')" alt="Copy Spanish text">
+            <div class="text" id="translated-text">El tiempo está bien.</div>
+            <img src="./icon/copy.png" class="copy-btn" onclick="copyText('translated-text')" alt="Copy Spanish text">
         </div>
         <div class="languages">
             <select class="lang-btn">
@@ -171,20 +263,219 @@
                 <option value="Thai">Thai</option>
                 <option value="Traditional Chinese">Traditional Chinese</option>
             </select>
-            <div class="camera">
-                <img src="./icon/camera.png" alt="camera" class="camera-icon">
+            <div class="camera" id="camera">
+                <input type="file" accept="image/*" capture="camera" id="capture-photo" style="display: none;"  onchange="loadFile(event)" />
+                <img src="./icon/camera.png" class="camera-icon">
             </div>
-            <div class="share">
-                <img src="./icon/share.png" alt="camera" class="camera-icon">
+            <div class="share" id="share">
+                <img src="./icon/share.png" class="share-icon">
             </div>
         </div>
     </div>
 
     <script>
-        document.getElementById('open-camera').addEventListener('click', function() {
-        document.getElementById('capture-photo').click();
-    });
-        document.querySelector('.share').addEventListener('click', clickShareBtn);
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const photo = document.getElementById('photo');
+        const captureButton = document.getElementById('camera');
+        const shareButton = document.getElementById('share');
+        let capturedBlob;
+
+        if (isMobileDevice()) {
+            video.style.display = 'none';
+        }
+
+        // Get access to the camera
+        navigator.mediaDevices.getUserMedia({
+            audio: false,
+            video: {
+                facingMode: 'environment'
+            }
+        })
+            .then(stream => {
+                video.srcObject = stream;
+            })
+            .catch(err => {
+                console.error("Error accessing camera: " + err);
+            });
+
+        var loadFile = function(event) {
+            var photo = document.getElementById('photo');
+            var reader = new FileReader();
+            reader.onload = function(){
+                photo.src = reader.result;
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        };
+
+        // Capture the photo when the button is clicked
+        captureButton.addEventListener('click', () => {
+            if (isMobileDevice()) {
+                document.getElementById('capture-photo').click();
+            } else {
+                const context = canvas.getContext('2d');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                // Convert the canvas image to a data URL
+                const dataUrl = canvas.toDataURL('image/png');
+                photo.src = dataUrl;
+
+                // Show the captured photo
+                photo.style.display = '';
+
+                // Convert data URL to Blob for upload
+                capturedBlob = dataURLToBlob(dataUrl);
+            }
+
+        });
+
+        // Helper function to convert data URL to Blob
+        function dataURLToBlob(dataUrl) {
+            const [header, base64] = dataUrl.split(',');
+            const binaryString = atob(base64);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            return new Blob([bytes], { type: 'image/png' });
+        }
+
+        // Upload the captured photo when the upload button is clicked
+        // uploadButton.addEventListener('click', () => {
+        //     if (!capturedBlob) {
+        //         alert("Please capture a photo first.");
+        //         return;
+        //     }
+
+        //     const formData = new FormData();
+        //     formData.append('documents', capturedBlob, 'photo.png');
+
+        //     fetch('https://deepexi-docai.deepexi.com/api/contracts/v3/parser/external/task/create?parse_type=1&merge_images=1', {
+        //         method: 'POST',
+        //         body: formData,
+        //         headers: {
+        //             'Accept': 'application/json'
+        //         }
+        //     })
+        //         .then(response => response.json())
+        //         .then(data => {
+        //             if (data.code === 200) {
+        //                 const taskIds = data.data.task_ids;
+        //                 fetchResult(taskIds);
+        //             } else {
+        //                 console.error('Error:', data.msg);
+        //             }
+        //         })
+        //         .catch((error) => {
+        //             console.error('Error:', error);
+        //         });
+        // });
+
+        // Adding retry mechanism to fetch result
+        function fetchResult(taskIds, retry = true, retries = 0) {
+            const myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+
+            const raw = JSON.stringify({ "task_id": taskIds[0] });
+
+            const requestOptions = {
+                method: "POST",
+                headers: myHeaders,
+                body: raw,
+                redirect: "follow"
+            };
+
+            fetch("https://deepexi-docai.deepexi.com/api/contracts/v3/parser/external/result", requestOptions)
+                .then((response) => response.json())
+                .then((result) => {
+                    if (result.code === 200) {
+                        const content = result.data.parse_result.pages[0].content;
+                        if (content.length > 0) {
+                            resultText.value = content.map(item => item.text).join('\n');
+                        } else if (retry) {
+                            setTimeout(() => fetchResult(taskIds, retries < 30, retries + 1), 1000); // Retry after 1 seconds, increment retries counter
+                        }
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    if (retry) {
+                        setTimeout(() => fetchResult(taskIds, retries < 30, retries + 1), 1000); // Retry after 1 seconds, increment retries counter
+                    }
+                });
+        }
+
+        function buildApiRequest(content, modelName, selectedMode, selectedLanguage, temperature) {
+            const myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+            myHeaders.append("Authorization", "sk-OzEgxi3q30F5v4b8Ac1f09Db3eDf4290B0202b24B54bA821"); // Add the actual authorization token here
+
+            const raw = JSON.stringify({
+                "model": modelName,
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": `You are a expert in language ${selectedMode === "translation" ? "translation" : "summarization"}. Your task is to ${selectedMode === "translation" ? "translate" : "summarize"} the following content to ${selectedLanguage}. ${selectedMode === "translation" ? "Output only the result without any extra information" : `1. Summarize the following report into a few key points.\n2. Write the bullet points in one sentences each\n3. Output only the translated content without any extra information.`}. Content: ${content}`
+                    }
+                ],
+                "temperature": temperature
+            });
+
+            const requestOptions = {
+                method: "POST",
+                headers: myHeaders,
+                body: raw,
+                redirect: "follow"
+            };
+
+            return requestOptions;
+        }
+
+        // Send the result text content when the send button is clicked
+        // sendButton.addEventListener('click', () => {
+        //     console.log('test')
+        //     const selectedLanguage = document.getElementById('languageSelect').value;
+        //     const apiRequestOptions = buildApiRequest(resultText.value, 'gpt-4o-mini', `translation`, selectedLanguage, 0.7);
+
+        //     fetch("https://fastagi.deepexi.com/v1/chat/completions", apiRequestOptions)
+        //         .then((response) => response.json())
+        //         .then((result) => {
+        //             responseText.value = result.choices[0].message.content;
+        //         })
+        //         .catch((error) => console.error(error));
+        // });
+
+        // sendButton2.addEventListener('click', () => {
+        //     console.log('test')
+        //     const selectedLanguage = document.getElementById('languageSelect').value;
+        //     const apiRequestOptions = buildApiRequest(resultText.value, 'deepexi2.5-72b-instruct', `translation`, selectedLanguage, 0.7);
+
+        //     fetch("https://fastagi.deepexi.com/v1/chat/completions", apiRequestOptions)
+        //         .then((response) => response.json())
+        //         .then((result) => {
+        //             responseText.value = result.choices[0].message.content;
+        //         })
+        //         .catch((error) => console.error(error));
+        // });
+
+        // sendButton3.addEventListener('click', () => {
+        //     console.log('test')
+        //     const selectedLanguage = document.getElementById('languageSelect').value;
+        //     const apiRequestOptions = buildApiRequest(resultText.value, 'gpt-4o-mini', `summarization`, selectedLanguage, 0.7);
+
+        //     fetch("https://fastagi.deepexi.com/v1/chat/completions", apiRequestOptions)
+        //         .then((response) => response.json())
+        //         .then((result) => {
+        //             responseText.value = result.choices[0].message.content;
+        //         })
+        //         .catch((error) => console.error(error));
+        // });
+
+        shareButton.addEventListener('click', clickShareBtn);
+
         function copyText(elementId) {
             var text = document.getElementById(elementId).innerText;
             navigator.clipboard.writeText(text).then(() => {
@@ -214,8 +505,8 @@
         function shareContent() {
             navigator.share({
                 title: 'Medical Report Translator',
-                text: 'Check out this medical report translation.',
-                url: window.location.href
+                text: document.getElementById('translated-text').innerText,
+                url: null
             })
                 .then(() => console.log('Shared successfully'))
                 .catch((error) => console.log('Error sharing:', error));
@@ -223,8 +514,7 @@
 
         function sendEmail() {
             var subject = 'Medical Report Translator Result';
-            var body = 'Here is the translation result: \n\n' + document.getElementById('spanish-text').innerText;
-
+            var body = document.getElementById('translated-text').innerText;
             var mailtoLink = 'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
             window.location.href = mailtoLink;
         }
