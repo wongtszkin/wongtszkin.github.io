@@ -243,14 +243,14 @@
             <div class="info">
                 <span>OCR Result</span>
             </div>
-            <div class="text" id="resultText" readonly=""></div>
+            <div class="text" id="resultText" readonly="">Content</div>
             <img src="./icon/copy.png" class="copy-btn" onclick="copyText('english-text')" alt="Copy English text">
         </div>
         <div class="translation">
             <div class="info">
                 <span>Translation Result</span>
             </div>
-            <div class="text" id="translated-text"></div>
+            <div class="text" id="translated-text">Content</div>
             <img src="./icon/copy.png" class="copy-btn" onclick="copyText('translated-text')" alt="Copy Spanish text">
         </div>
         <div class="languages">
@@ -325,26 +325,42 @@
         
                 var formData = new FormData();
                 formData.append('documents', blob, 'photo.png');
-        
+
                 fetch('https://deepexi-docai.deepexi.com/api/contracts/v3/parser/external/task/create?parse_type=1&merge_images=1', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'Accept': 'application/json'
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.code === 200) {
+                        const taskIds = data.data.task_ids;
+                        const ocr_result = fetchResult(taskIds);
+                        
+                        // Get translated text
+                        const selectedLanguage = 'en';
+                        const apiRequestOptions = buildApiRequest(ocr_result, 'gpt-4o-mini', 'translation', selectedLanguage, 0.7);
+                        
+                        fetch('https://fastagi.deepexi.com/v1/chat/completions', apiRequestOptions)
+                            .then((response) => response.json())
+                            .then((result) => {
+                                document.getElementById('translated-text').textContent = result.choices[0].message.content;
+                            })
+                            .catch((error) => console.error(error));
+                    } else {
+                        console.error('Error:', data.msg);
                     }
                 })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.code === 200) {
-                            const taskIds = data.data.task_ids;
-                            fetchResult(taskIds);
-                        } else {
-                            console.error('Error:', data.msg);
-                        }
-                    })
-                    .catch((error) => {
-                        console.error('Error:', error);
-                    });
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+
+
+
+
+                    
             };
         
             reader.onerror = function(error) {
@@ -417,6 +433,8 @@
                         const content = result.data.parse_result.pages[0].content;
                         if (content.length > 0) {
                             resultText.innerText = content.map(item => item.text).join('\n');
+                            const result_test = content.map(item => item.text).join('\n');
+                            resolve(result_test);
                         } else if (retry) {
                             setTimeout(() => fetchResult(taskIds, retries < 30, retries + 1), 1000); // Retry after 1 seconds, increment retries counter
                         }
