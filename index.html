@@ -243,14 +243,14 @@
             <div class="info">
                 <span>OCR Result</span>
             </div>
-            <div class="text" id="resultText" readonly="">The weather is fine.</div>
+            <div class="text" id="resultText" readonly=""></div>
             <img src="./icon/copy.png" class="copy-btn" onclick="copyText('english-text')" alt="Copy English text">
         </div>
         <div class="translation">
             <div class="info">
                 <span>Translation Result</span>
             </div>
-            <div class="text" id="translated-text">El tiempo está bien.</div>
+            <div class="text" id="translated-text"></div>
             <img src="./icon/copy.png" class="copy-btn" onclick="copyText('translated-text')" alt="Copy Spanish text">
         </div>
         <div class="languages">
@@ -407,6 +407,8 @@
                 body: raw,
                 redirect: "follow"
             };
+
+            resultText.innerText = "AI OCR loading..."
 
             fetch("https://deepexi-docai.deepexi.com/api/contracts/v3/parser/external/result", requestOptions)
                 .then((response) => response.json())
