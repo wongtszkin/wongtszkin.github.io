@@ -337,18 +337,27 @@
                 .then(data => {
                     if (data.code === 200) {
                         const taskIds = data.data.task_ids;
-                        const ocr_result = fetchResult(taskIds);
-                        
+
+                        async function processTasks() {
+                            try {
+                                const ocr_result = await fetchResult(taskIds);
+                                const selectedLanguage = 'en';
+                                const apiRequestOptions = buildApiRequest(ocr_result, 'gpt-4o-mini', 'translation', selectedLanguage, 0.7);
+                                // rest of the code
+
                         // Get translated text
-                        const selectedLanguage = 'en';
-                        const apiRequestOptions = buildApiRequest(ocr_result, 'gpt-4o-mini', 'translation', selectedLanguage, 0.7);
-                        
                         fetch('https://fastagi.deepexi.com/v1/chat/completions', apiRequestOptions)
                             .then((response) => response.json())
                             .then((result) => {
                                 document.getElementById('translated-text').textContent = result.choices[0].message.content;
                             })
                             .catch((error) => console.error(error));
+                            } catch (error) {
+                                console.error(error);
+                            }
+                        }
+                        
+
                     } else {
                         console.error('Error:', data.msg);
                     }
@@ -424,8 +433,6 @@
                 redirect: "follow"
             };
 
-            resultText.innerText = "AI OCR loading..."
-
             fetch("https://deepexi-docai.deepexi.com/api/contracts/v3/parser/external/result", requestOptions)
                 .then((response) => response.json())
                 .then((result) => {
@@ -436,16 +443,11 @@
                             const result_test = content.map(item => item.text).join('\n');
                             resolve(result_test);
                         } else if (retry) {
+                            resultText.innerText = "AI OCR loading..."
                             setTimeout(() => fetchResult(taskIds, retries < 30, retries + 1), 1000); // Retry after 1 seconds, increment retries counter
                         }
                     }
                 })
-                .catch((error) => {
-                    console.error('Error:', error);
-                    if (retry) {
-                        setTimeout(() => fetchResult(taskIds, retries < 30, retries + 1), 1000); // Retry after 1 seconds, increment retries counter
-                    }
-                });
         }
 
         function buildApiRequest(content, modelName, selectedMode, selectedLanguage, temperature) {
