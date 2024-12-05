@@ -423,16 +423,13 @@
                             .then(data => resolve(data)) // Make sure to resolve promise
                             , 1000);
                     } else {
-                        resultText.innerText = "AI OCR loading..."
                         reject('No content');
                     }
                 } else {
-                    resultText.innerText = "AI OCR loading..."
                     reject('Invalid code');
                 }
             })
             .catch((error) => {
-                resultText.innerText = "AI OCR loading..."
                 console.error('Error:', error);
                 if (retry && retries < 30) {
                     setTimeout(() => 
