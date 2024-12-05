@@ -244,18 +244,18 @@
                 <span>OCR Result</span>
             </div>
             <div class="text" id="resultText" readonly="">Content</div>
-            <img src="./icon/copy.png" class="copy-btn" onclick="copyText('english-text')" alt="Copy English text">
+            <img src="./icon/copy.png" class="copy-btn" onclick="copyText('english-text')" alt="Copy OCR Result">
         </div>
         <div class="translation">
             <div class="info">
                 <span>Translation Result</span>
             </div>
             <div class="text" id="translated-text">Content</div>
-            <img src="./icon/copy.png" class="copy-btn" onclick="copyText('translated-text')" alt="Copy Spanish text">
+            <img src="./icon/copy.png" class="copy-btn" onclick="copyText('translated-text')" alt="Copy Translation Result">
         </div>
         <div class="languages">
-            <select class="lang-btn">
-                <option value="English">English</option>
+            <select class="lang-btn" id="languageSelect">
+                <option value="English">English (default)</option>
                 <option value="French">French</option>
                 <option value="German">German</option>
                 <option value="Japanese">Japanese</option>
@@ -305,9 +305,6 @@
             var reader = new FileReader();
 
             reader.onload = function() {
-                console.log('Reader loaded:', reader.result); // Debugging information
-                photo.src = reader.result;
-                photo.style.display = 'block'; // make sure the image element is visible
                 var byteString = atob(reader.result.split(',')[1]);
                 var mimeString = reader.result.split(',')[0].split(':')[1].split(';')[0];
                 var ia = new Uint8Array(byteString.length);
@@ -332,7 +329,7 @@
                             const ocr_result = await fetchResult(taskIds);
 
                             // Get translated text
-                            const selectedLanguage = 'en';
+                            const selectedLanguage = document.getElementById('languageSelect').value;
                             const apiRequestOptions = buildApiRequest(ocr_result, 'gpt-4o-mini', 'translation', selectedLanguage, 0.7);
 
                             fetch('https://fastagi.deepexi.com/v1/chat/completions', apiRequestOptions)
