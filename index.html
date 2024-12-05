@@ -235,8 +235,6 @@
             </div>
         </div>
         <div class="capture">
-            <video id="video" autoplay></video>
-            <canvas id="canvas" style="display: none;"></canvas>
             <img id="photo" style="display: none;">
         </div>
         <div class="translation">
@@ -299,20 +297,20 @@
                 console.error("Error accessing camera: " + err);
             });
 
-        var loadFile = function(event) {
-            var photo = document.getElementById('photo');
-            var reader = new FileReader();
-            reader.onload = function(){
-                photo.src = reader.result;
-                photo.style.display = 'block'; // make sure the image element is visible
-            };
-            reader.readAsDataURL(event.target.files[0]);
-        };
-        
-        // Add an event listener to trigger the file input when the camera icon is clicked
-        document.querySelector('.camera-icon').addEventListener('click', function() {
-            document.getElementById('capture-photo').click();
-        });
+            var loadFile = function(event) {
+                    var photo = document.getElementById('photo');
+                    var reader = new FileReader();
+                    reader.onload = function(){
+                        photo.src = reader.result;
+                        photo.style.display = 'block'; // make sure the image element is visible
+                    };
+                    reader.readAsDataURL(event.target.files[0]);
+                };
+
+                // Add an event listener to trigger the file input when the camera icon is clicked
+                document.querySelector('.camera-icon').addEventListener('click', function() {
+                    document.getElementById('capture-photo').click();
+                });
 
         // Capture the photo when the button is clicked
         captureButton.addEventListener('click', () => {
@@ -348,37 +346,6 @@
             }
             return new Blob([bytes], { type: 'image/png' });
         }
-
-        // Upload the captured photo when the upload button is clicked
-        // uploadButton.addEventListener('click', () => {
-        //     if (!capturedBlob) {
-        //         alert("Please capture a photo first.");
-        //         return;
-        //     }
-
-        //     const formData = new FormData();
-        //     formData.append('documents', capturedBlob, 'photo.png');
-
-        //     fetch('https://deepexi-docai.deepexi.com/api/contracts/v3/parser/external/task/create?parse_type=1&merge_images=1', {
-        //         method: 'POST',
-        //         body: formData,
-        //         headers: {
-        //             'Accept': 'application/json'
-        //         }
-        //     })
-        //         .then(response => response.json())
-        //         .then(data => {
-        //             if (data.code === 200) {
-        //                 const taskIds = data.data.task_ids;
-        //                 fetchResult(taskIds);
-        //             } else {
-        //                 console.error('Error:', data.msg);
-        //             }
-        //         })
-        //         .catch((error) => {
-        //             console.error('Error:', error);
-        //         });
-        // });
 
         // Adding retry mechanism to fetch result
         function fetchResult(taskIds, retry = true, retries = 0) {
@@ -440,45 +407,6 @@
             return requestOptions;
         }
 
-        // Send the result text content when the send button is clicked
-        // sendButton.addEventListener('click', () => {
-        //     console.log('test')
-        //     const selectedLanguage = document.getElementById('languageSelect').value;
-        //     const apiRequestOptions = buildApiRequest(resultText.value, 'gpt-4o-mini', `translation`, selectedLanguage, 0.7);
-
-        //     fetch("https://fastagi.deepexi.com/v1/chat/completions", apiRequestOptions)
-        //         .then((response) => response.json())
-        //         .then((result) => {
-        //             responseText.value = result.choices[0].message.content;
-        //         })
-        //         .catch((error) => console.error(error));
-        // });
-
-        // sendButton2.addEventListener('click', () => {
-        //     console.log('test')
-        //     const selectedLanguage = document.getElementById('languageSelect').value;
-        //     const apiRequestOptions = buildApiRequest(resultText.value, 'deepexi2.5-72b-instruct', `translation`, selectedLanguage, 0.7);
-
-        //     fetch("https://fastagi.deepexi.com/v1/chat/completions", apiRequestOptions)
-        //         .then((response) => response.json())
-        //         .then((result) => {
-        //             responseText.value = result.choices[0].message.content;
-        //         })
-        //         .catch((error) => console.error(error));
-        // });
-
-        // sendButton3.addEventListener('click', () => {
-        //     console.log('test')
-        //     const selectedLanguage = document.getElementById('languageSelect').value;
-        //     const apiRequestOptions = buildApiRequest(resultText.value, 'gpt-4o-mini', `summarization`, selectedLanguage, 0.7);
-
-        //     fetch("https://fastagi.deepexi.com/v1/chat/completions", apiRequestOptions)
-        //         .then((response) => response.json())
-        //         .then((result) => {
-        //             responseText.value = result.choices[0].message.content;
-        //         })
-        //         .catch((error) => console.error(error));
-        // });
 
         shareButton.addEventListener('click', clickShareBtn);
 
