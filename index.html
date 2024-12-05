@@ -254,8 +254,8 @@
             <img src="./icon/copy.png" class="copy-btn" onclick="copyText('translated-text')" alt="Copy Spanish text">
         </div>
         <div class="languages">
-            <select class="lang-btn">
-                <option value="English">English</option>
+            <select class="lang-btn" id="languageSelect">
+                <option value="English">English (default)</option>
                 <option value="French">French</option>
                 <option value="German">German</option>
                 <option value="Japanese">Japanese</option>
@@ -340,7 +340,7 @@
                         const ocr_result = fetchResult(taskIds);
                         
                         // Get translated text
-                        const selectedLanguage = 'en';
+                        const selectedLanguage = document.getElementById('languageSelect').value;
                         const apiRequestOptions = buildApiRequest(ocr_result, 'gpt-4o-mini', 'translation', selectedLanguage, 0.7);
                         
                         fetch('https://fastagi.deepexi.com/v1/chat/completions', apiRequestOptions)
