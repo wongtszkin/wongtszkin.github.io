@@ -302,14 +302,54 @@
         var loadFile = function(event) {
             var photo = document.getElementById('photo');
             var reader = new FileReader();
+        
             reader.onload = function() {
                 console.log('Reader loaded:', reader.result); // Debugging information
                 photo.src = reader.result;
                 photo.style.display = 'block'; // make sure the image element is visible
+        
+                // Convert base64 to raw binary data held in a string
+                var byteString = atob(reader.result.split(',')[1]);
+        
+                // Separate out the mime component
+                var mimeString = reader.result.split(',')[0].split(':')[1].split(';')[0];
+        
+                // Write the bytes of the string to a typed array
+                var ia = new Uint8Array(byteString.length);
+                for (var i = 0; i < byteString.length; i++) {
+                    ia[i] = byteString.charCodeAt(i);
+                }
+        
+                var blob = new Blob([ia], {type:mimeString});
+        
+                var formData = new FormData();
+                formData.append('documents', blob, 'photo.png');
+        
+                fetch('https://deepexi-docai.deepexi.com/api/contracts/v3/parser/external/task/create?parse_type=1&merge_images=1', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.code === 200) {
+                            const taskIds = data.data.task_ids;
+                            fetchResult(taskIds);
+                        } else {
+                            console.error('Error:', data.msg);
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                    });
             };
+        
             reader.onerror = function(error) {
                 console.error('Error reading file:', error);
             }
+            
             if (event.target.files && event.target.files[0]) {
                 console.log('File selected:', event.target.files[0]); // Log the file
                 reader.readAsDataURL(event.target.files[0]);
