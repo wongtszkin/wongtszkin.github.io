@@ -302,10 +302,20 @@
         var loadFile = function(event) {
             var photo = document.getElementById('photo');
             var reader = new FileReader();
-            reader.onload = function(){
+            reader.onload = function() {
+                console.log('Reader loaded:', reader.result); // Debugging information
                 photo.src = reader.result;
+                photo.style.display = 'block'; // make sure the image element is visible
             };
-            reader.readAsDataURL(event.target.files[0]);
+            reader.onerror = function(error) {
+                console.error('Error reading file:', error);
+            }
+            if (event.target.files && event.target.files[0]) {
+                console.log('File selected:', event.target.files[0]); // Log the file
+                reader.readAsDataURL(event.target.files[0]);
+            } else {
+                console.error("No file selected");
+            }
         };
 
         // Capture the photo when the button is clicked
