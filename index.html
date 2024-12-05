@@ -305,6 +305,9 @@
             var reader = new FileReader();
 
             reader.onload = function() {
+                console.log('Reader loaded:', reader.result); // Debugging information
+                photo.src = reader.result;
+                photo.style.display = 'block'; // make sure the image element is visible
                 var byteString = atob(reader.result.split(',')[1]);
                 var mimeString = reader.result.split(',')[0].split(':')[1].split(';')[0];
                 var ia = new Uint8Array(byteString.length);
