@@ -414,7 +414,7 @@
                     if (result.code === 200) {
                         const content = result.data.parse_result.pages[0].content;
                         if (content.length > 0) {
-                            resultText.value = content.map(item => item.text).join('\n');
+                            resultText.innerText = content.map(item => item.text).join('\n');
                         } else if (retry) {
                             setTimeout(() => fetchResult(taskIds, retries < 30, retries + 1), 1000); // Retry after 1 seconds, increment retries counter
                         }
