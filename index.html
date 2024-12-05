@@ -337,27 +337,18 @@
                 .then(data => {
                     if (data.code === 200) {
                         const taskIds = data.data.task_ids;
-
-                        async function processTasks() {
-                            try {
-                                const ocr_result = await fetchResult(taskIds);
-                                const selectedLanguage = 'en';
-                                const apiRequestOptions = buildApiRequest(ocr_result, 'gpt-4o-mini', 'translation', selectedLanguage, 0.7);
-                                // rest of the code
-
+                        const ocr_result = fetchResult(taskIds);
+                        
                         // Get translated text
+                        const selectedLanguage = 'en';
+                        const apiRequestOptions = buildApiRequest(ocr_result, 'gpt-4o-mini', 'translation', selectedLanguage, 0.7);
+                        
                         fetch('https://fastagi.deepexi.com/v1/chat/completions', apiRequestOptions)
                             .then((response) => response.json())
                             .then((result) => {
                                 document.getElementById('translated-text').textContent = result.choices[0].message.content;
                             })
                             .catch((error) => console.error(error));
-                            } catch (error) {
-                                console.error(error);
-                            }
-                        }
-                        
-
                     } else {
                         console.error('Error:', data.msg);
                     }
