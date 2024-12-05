@@ -304,9 +304,15 @@
             var reader = new FileReader();
             reader.onload = function(){
                 photo.src = reader.result;
+                photo.style.display = 'block'; // make sure the image element is visible
             };
             reader.readAsDataURL(event.target.files[0]);
         };
+        
+        // Add an event listener to trigger the file input when the camera icon is clicked
+        document.querySelector('.camera-icon').addEventListener('click', function() {
+            document.getElementById('capture-photo').click();
+        });
 
         // Capture the photo when the button is clicked
         captureButton.addEventListener('click', () => {
