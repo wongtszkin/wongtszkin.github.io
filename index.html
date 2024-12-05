@@ -304,39 +304,6 @@
             var reader = new FileReader();
             reader.onload = function(){
                 photo.src = reader.result;
-        
-                // Here, we're making sure that the photo.bitmap (blob) is captured.
-                // You may need to adjust this depending on how your blobs are captured.
-                let capturedBlob = photo.src;
-        
-                if (!capturedBlob) {
-                    alert("Please capture a photo first.");
-                    return;
-                }
-        
-                const formData = new FormData();
-                formData.append('documents', capturedBlob, 'photo.png');
-        
-                fetch('https://deepexi-docai.deepexi.com/api/contracts/v3/parser/external/task/create?parse_type=1&merge_images=1', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'Accept': 'application/json'
-                    }
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.code === 200) {
-                            const taskIds = data.data.task_ids;
-                            // Here, you can add the function to handle the taskIds.
-                        } else {
-                            console.error('Error:', data.msg);
-                        }
-                    })
-                    .catch((error) => {
-                        console.error('Error:', error);
-                    });
-        
             };
             reader.readAsDataURL(event.target.files[0]);
         };
