@@ -363,7 +363,7 @@
                 fetch('https://fastagi.deepexi.com/v1/chat/completions', apiRequestOptions)
                     .then((response) => response.json())
                     .then((result) => {
-                        document.getElementById('translated-text').textContent = result.choices[0].message.content;
+                        document.getElementById('translated-text').textContent = result.choices[0].message.content.replace(/\n/g, '<br>');
                     })
                     .catch((error) => console.error(error));
             }
