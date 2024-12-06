@@ -414,7 +414,6 @@
                 myHeaders.append("Content-Type", "application/json");
 
                 const raw = JSON.stringify({ "task_id": taskIds[0] });
-                resultText.innerText = "AI OCR loading..."
 
                 const requestOptions = {
                     method: "POST",
@@ -433,22 +432,18 @@
                                 const result_test = content.map(item => item.text).join('\n');
                                 resolve(result_test);
                             } else if (retry) {
-                                resultText.innerText = "AI OCR loading..."
                                 setTimeout(() => 
                                     fetchResult(taskIds, retries < 30, retries + 1)
                                     .then(data => resolve(data)) // Make sure to resolve promise
                                     , 1000);
                             } else {
-                                resultText.innerText = "AI OCR loading..."
                                 reject('No content');
                             }
                         } else {
-                            resultText.innerText = "AI OCR loading..."
                             reject('Invalid code');
                         }
                     })
                     .catch((error) => {
-                        resultText.innerText = "AI OCR loading..."
                         console.error('Error:', error);
                         if (retry && retries < 30) {
                             setTimeout(() => 
