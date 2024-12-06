@@ -280,7 +280,6 @@
         const resultText = document.getElementById('resultText');
         const translated_Text = document.getElementById('translated-text');
         let capturedBlob;
-        const ocr_result = "";
 
         if (isMobileDevice()) {
             video.style.display = 'none';
@@ -328,8 +327,7 @@
                     .then(async function (data) {   // make this function async
                         if (data.code === 200) {
                             const taskIds = data.data.task_ids;
-                            ocr_result = await fetchResult(taskIds);
-
+                            const ocr_result = await fetchResult(taskIds);
                             // Get translated text
                             const selectedLanguage = document.getElementById('languageSelect').value;
                             const apiRequestOptions = buildApiRequest(ocr_result, 'gpt-4o-mini', 'translation', selectedLanguage, 0.7);
@@ -361,9 +359,9 @@
         };
 
         document.getElementById('languageSelect').addEventListener('change', async function() {
-            if (ocr_result) {
+            if (resultText) {
                 const selectedLanguage = this.value;
-                const apiRequestOptions = buildApiRequest(ocr_result, 'gpt-4o-mini', 'translation', selectedLanguage, 0.7);
+                const apiRequestOptions = buildApiRequest(resultText, 'gpt-4o-mini', 'translation', selectedLanguage, 0.7);
 
                 fetch('https://fastagi.deepexi.com/v1/chat/completions', apiRequestOptions)
                     .then((response) => response.json())
