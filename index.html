@@ -315,6 +315,7 @@
                 var blob = new Blob([ia], { type: mimeString });
                 var formData = new FormData();
                 formData.append('documents', blob, 'photo.png');
+                resultText.innerText = "AI OCR loading..."
 
                 fetch('https://deepexi-docai.deepexi.com/api/contracts/v3/parser/external/task/create?parse_type=1&merge_images=1', {
                     method: 'POST',
@@ -359,9 +360,9 @@
         };
 
         document.getElementById('languageSelect').addEventListener('change', async function() {
-            if (resultText) {
+            if (resultText.innerText) {
                 const selectedLanguage = this.value;
-                const apiRequestOptions = buildApiRequest(resultText, 'gpt-4o-mini', 'translation', selectedLanguage, 0.7);
+                const apiRequestOptions = buildApiRequest(resultText.innerText, 'gpt-4o-mini', 'translation', selectedLanguage, 0.7);
 
                 fetch('https://fastagi.deepexi.com/v1/chat/completions', apiRequestOptions)
                     .then((response) => response.json())
