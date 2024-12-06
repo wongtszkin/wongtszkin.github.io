@@ -18,10 +18,8 @@
         }
 
         .container {
-            width: 100%;
-            max-width: 70%;
             /* adjust this value based on your needs */
-            margin: 20px auto;
+            margin: 20px;
             background-color: white;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -243,19 +241,19 @@
             <div class="info">
                 <span>OCR Result</span>
             </div>
-            <div class="text" id="resultText" readonly="">Content</div>
+            <div class="text" id="resultText" readonly=""> [Empty] </div>
             <img src="./icon/copy.png" class="copy-btn" onclick="copyText('english-text')" alt="Copy OCR Result">
         </div>
         <div class="translation">
             <div class="info">
                 <span>Translation Result</span>
             </div>
-            <div class="text" id="translated-text">Content</div>
-            <img src="./icon/copy.png" class="copy-btn" onclick="copyText('translated-text')" alt="Copy Translation Result">
+            <div class="text" id="translated-text"> [Empty] </div>
+            <img src="./icon/copy.png" class="copy-btn" onclick="copyText('translated-text')" alt="Copy Translated Text">
         </div>
         <div class="languages">
             <select class="lang-btn" id="languageSelect">
-                <option value="English">English (default)</option>
+                <option value="English">English</option>
                 <option value="French">French</option>
                 <option value="German">German</option>
                 <option value="Japanese">Japanese</option>
@@ -280,27 +278,27 @@
         const captureButton = document.getElementById('camera');
         const shareButton = document.getElementById('share');
         const resultText = document.getElementById('resultText');
+        const translated_Text = document.getElementById('translated-text');
         let capturedBlob;
 
         if (isMobileDevice()) {
             video.style.display = 'none';
-        }
-
-        // Get access to the camera
-        navigator.mediaDevices.getUserMedia({
-            audio: false,
-            video: {
-                facingMode: 'environment'
-            }
-        })
-            .then(stream => {
-                video.srcObject = stream;
+        } else {
+            // Get access to the camera
+            navigator.mediaDevices.getUserMedia({
+                audio: false,
+                video: {
+                    facingMode: 'environment'
+                }
             })
-            .catch(err => {
-                console.error("Error accessing camera: " + err);
-            });
-
-            var loadFile = function(event) {
+                .then(stream => {
+                    video.srcObject = stream;
+                })
+                .catch(err => {
+                    console.error("Error accessing camera: " + err);
+                });
+        }
+        var loadFile = function(event) {
             var photo = document.getElementById('photo');
             var reader = new FileReader();
 
@@ -397,62 +395,64 @@
         }
 
         function fetchResult(taskIds, retry = true, retries = 0) {
-    return new Promise((resolve, reject) => {
-        const myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
+            return new Promise((resolve, reject) => {
+                const myHeaders = new Headers();
+                myHeaders.append("Content-Type", "application/json");
 
-        const raw = JSON.stringify({ "task_id": taskIds[0] });
-
-        const requestOptions = {
-            method: "POST",
-            headers: myHeaders,
-            body: raw,
-            redirect: "follow"
-        };
-
-        fetch("https://deepexi-docai.deepexi.com/api/contracts/v3/parser/external/result", requestOptions)
-            .then((response) => response.json())
-            .then((result) => {
-                if (result.code === 200) {
-                    const content = result.data.parse_result.pages[0].content;
-                    if (content.length > 0) {
-                        resultText.innerText = content.map(item => item.text).join('\n');
-                        const result_test = content.map(item => item.text).join('\n');
-                        resolve(result_test);
-                    } else if (retry) {
-                        resultText.innerText = "AI OCR loading..."
-                        setTimeout(() => 
-                            fetchResult(taskIds, retries < 30, retries + 1)
-                            .then(data => resolve(data)) // Make sure to resolve promise
-                            , 1000);
-                    } else {
-                        resultText.innerText = "AI OCR loading..."
-                        reject('No content');
-                    }
-                } else {
-                    resultText.innerText = "AI OCR loading..."
-                    reject('Invalid code');
-                }
-            })
-            .catch((error) => {
+                const raw = JSON.stringify({ "task_id": taskIds[0] });
                 resultText.innerText = "AI OCR loading..."
-                console.error('Error:', error);
-                if (retry && retries < 30) {
-                    setTimeout(() => 
-                         fetchResult(taskIds, retries < 30, retries + 1)
-                         .then(data => resolve(data)) // Make sure to resolve promise
-                         , 1000);
-                } else {
-                    reject(error);
-                }
+
+                const requestOptions = {
+                    method: "POST",
+                    headers: myHeaders,
+                    body: raw,
+                    redirect: "follow"
+                };
+
+                fetch("https://deepexi-docai.deepexi.com/api/contracts/v3/parser/external/result", requestOptions)
+                    .then((response) => response.json())
+                    .then((result) => {
+                        if (result.code === 200) {
+                            const content = result.data.parse_result.pages[0].content;
+                            if (content.length > 0) {
+                                resultText.innerText = content.map(item => item.text).join('\n');
+                                const result_test = content.map(item => item.text).join('\n');
+                                resolve(result_test);
+                            } else if (retry) {
+                                resultText.innerText = "AI OCR loading..."
+                                setTimeout(() => 
+                                    fetchResult(taskIds, retries < 30, retries + 1)
+                                    .then(data => resolve(data)) // Make sure to resolve promise
+                                    , 1000);
+                            } else {
+                                resultText.innerText = "AI OCR loading..."
+                                reject('No content');
+                            }
+                        } else {
+                            resultText.innerText = "AI OCR loading..."
+                            reject('Invalid code');
+                        }
+                    })
+                    .catch((error) => {
+                        resultText.innerText = "AI OCR loading..."
+                        console.error('Error:', error);
+                        if (retry && retries < 30) {
+                            setTimeout(() => 
+                                fetchResult(taskIds, retries < 30, retries + 1)
+                                .then(data => resolve(data)) // Make sure to resolve promise
+                                , 1000);
+                        } else {
+                            reject(error);
+                        }
+                    });
             });
-    });
-}
+        }
 
         function buildApiRequest(content, modelName, selectedMode, selectedLanguage, temperature) {
             const myHeaders = new Headers();
             myHeaders.append("Content-Type", "application/json");
             myHeaders.append("Authorization", "sk-OzEgxi3q30F5v4b8Ac1f09Db3eDf4290B0202b24B54bA821"); // Add the actual authorization token here
+            translated_Text.innerText = "AI Translating"
 
             const raw = JSON.stringify({
                 "model": modelName,
@@ -475,13 +475,12 @@
             return requestOptions;
         }
 
-
         shareButton.addEventListener('click', clickShareBtn);
 
         function copyText(elementId) {
             var text = document.getElementById(elementId).innerText;
             navigator.clipboard.writeText(text).then(() => {
-                alert('Copied: ' + text);
+                alert('Copied!');
             }).catch(err => {
                 console.error('Failed to copy text: ', err);
             });
