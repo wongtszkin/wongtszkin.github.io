@@ -85,6 +85,8 @@
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
             margin-bottom: 10px;
             position: relative;
+            white-space: pre-wrap;
+            word-wrap: break-word;
         }
     
         .info {
@@ -332,7 +334,7 @@
                             fetch('https://fastagi.deepexi.com/v1/chat/completions', apiRequestOptions)
                                 .then((response) => response.json())
                                 .then((result) => {
-                                    document.getElementById('translated-text').textContent = result.choices[0].message.content.replace(/\n/g, '\"<br>\"');
+                                    document.getElementById('translated-text').textContent = result.choices[0].message.content;
                                 })
                                 .catch((error) => console.error(error));
                         } else {
@@ -363,7 +365,7 @@
                 fetch('https://fastagi.deepexi.com/v1/chat/completions', apiRequestOptions)
                     .then((response) => response.json())
                     .then((result) => {
-                        document.getElementById('translated-text').textContent = result.choices[0].message.content.replace(/\n/g, '\"<br>\"');
+                        document.getElementById('translated-text').innerHTML = result.choices[0].message.content;
                     })
                     .catch((error) => console.error(error));
             }
@@ -439,7 +441,6 @@
                         }
                     })
                     .catch((error) => {
-                        console.error('Error:', error);
                         if (retry && retries < 30) {
                             setTimeout(() => 
                                 fetchResult(taskIds, retries < 30, retries + 1)
