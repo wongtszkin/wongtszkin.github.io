@@ -280,6 +280,7 @@
         const resultText = document.getElementById('resultText');
         const translated_Text = document.getElementById('translated-text');
         let capturedBlob;
+        const ocr_result = "";
 
         if (isMobileDevice()) {
             video.style.display = 'none';
@@ -327,7 +328,7 @@
                     .then(async function (data) {   // make this function async
                         if (data.code === 200) {
                             const taskIds = data.data.task_ids;
-                            const ocr_result = await fetchResult(taskIds);
+                            ocr_result = await fetchResult(taskIds);
 
                             // Get translated text
                             const selectedLanguage = document.getElementById('languageSelect').value;
@@ -358,6 +359,20 @@
                 console.error("No file selected");
             }
         };
+
+        document.getElementById('languageSelect').addEventListener('change', async function() {
+            if (ocr_result) {
+                const selectedLanguage = this.value;
+                const apiRequestOptions = buildApiRequest(ocr_result, 'gpt-4o-mini', 'translation', selectedLanguage, 0.7);
+
+                fetch('https://fastagi.deepexi.com/v1/chat/completions', apiRequestOptions)
+                    .then((response) => response.json())
+                    .then((result) => {
+                        document.getElementById('translated-text').textContent = result.choices[0].message.content;
+                    })
+                    .catch((error) => console.error(error));
+            }
+        });
 
         // Capture the photo when the button is clicked
         captureButton.addEventListener('click', () => {
